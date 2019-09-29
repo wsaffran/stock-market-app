@@ -29,13 +29,24 @@ const UserType = new GraphQLObjectType({
     transactions: {
       type: new GraphQLList(TransactionType),
       resolve(parent, args) {
-        return Transaction.find({})
+        return Transaction.find({ userId: parent.id})
       }
     },
     stocks: {
       type: new GraphQLList(StockType),
       resolve(parent, args) {
-        return Stock.find({})
+        Stock.find({userId: parent.id })
+        .then(stocks => {
+          stocks.forEach(stock => {
+            axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.ticker}&apikey=${process.env.API_KEY}`)
+              .then(response => {
+                stock.price = parseFloat(response.data['Global Quote']['05. price']).toFixed(2)
+                stock.openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
+                stock.save()
+            })
+          })
+        })
+        return Stock.find({ userId: parent.id })
       }
     }
   })
@@ -65,6 +76,7 @@ const StockType = new GraphQLObjectType({
     id: { type: GraphQLID },
     ticker: { type: GraphQLString },
     price: { type: GraphQLFloat },
+    openPrice: { type: GraphQLFloat },
     shares: { type: GraphQLInt },
     user: {
       type: UserType,
@@ -122,7 +134,8 @@ const RootMutation = new GraphQLObjectType({
         .then(user => {
           return axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${args.ticker}&apikey=${process.env.API_KEY}`)
             .then(response => {
-              const price = response.data['Global Quote']['05. price']
+              const price = parseFloat(response.data['Global Quote']['05. price']).toFixed(2)
+              const openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
               if (user.balance > args.shares * price) {
                 // update stock list
                 return Stock.findOne({ userId: args.userId, ticker: args.ticker})
@@ -131,6 +144,7 @@ const RootMutation = new GraphQLObjectType({
                     const stock = new Stock({
                       ticker: args.ticker,
                       price: price,
+                      openPrice: openPrice,
                       shares: args.shares,
                       userId: args.userId
                     })
@@ -138,6 +152,7 @@ const RootMutation = new GraphQLObjectType({
                   } else {
                     stock.shares += args.shares,
                     stock.price = price
+                    stock.openPrice = openPrice
                     stock.save()
                   }
                   // update user balance
