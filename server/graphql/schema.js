@@ -137,7 +137,10 @@ const RootMutation = new GraphQLObjectType({
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) }
       },
-      async resolve(parent, args) {
+      async resolve(parent, args, req) {
+        if (!req.isAuth) {
+          throw new Error('Unauthenticated')
+        }
         const hashedPassword = await bcrypt.hash(args.password, 12)
         const user = await new User({
           name: args.name,
@@ -160,7 +163,10 @@ const RootMutation = new GraphQLObjectType({
         action: { type: new GraphQLNonNull(GraphQLString) },
         userId: { type: new GraphQLNonNull(GraphQLID) }
       },
-      resolve(parent, args) {
+      resolve(parent, args, req) {
+        if (!req.isAuth) {
+          throw new Error('Unauthenticated')
+        }
         return User.findById(args.userId)
         .then(user => {
           return axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${args.ticker}&apikey=${process.env.API_KEY}`)
