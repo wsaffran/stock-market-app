@@ -17,6 +17,8 @@ const Transaction = require('../models/transaction')
 const Stock = require('../models/stock')
 
 const axios = require('axios')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const UserType = new GraphQLObjectType({
   name: 'User',
@@ -87,6 +89,14 @@ const StockType = new GraphQLObjectType({
   })
 })
 
+const AuthData = new GraphQLObjectType({
+  name: 'AuthData',
+  fields: () => ({
+    userId: { type: GraphQLID },
+    token: { type: GraphQLString }
+  })
+})
+
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
@@ -95,6 +105,25 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
         return User.findById(args.id)
+      }
+    },
+    login: {
+      type: AuthData,
+      args: {
+        email: { type: GraphQLString },
+        password: { type: GraphQLString }
+      },
+      async resolve(parent, args) {
+        const user = await User.findOne({ email: args.email })
+        if (!user) {
+          throw new Error("User does not exist");
+        }
+        const isEqual = await bcrypt.compare(args.password, user.password)
+        if (!isEqual) {
+          throw new Error('Password is incorrect!')
+        }
+        const token = jwt.sign({userId: user.id, email: user.email}, 'secretKey')
+        return { userId: user.id, token: token }
       }
     }
   }
@@ -111,13 +140,19 @@ const RootMutation = new GraphQLObjectType({
         password: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parent, args) {
-        const user = new User({
-          name: args.name,
-          email: args.email,
-          password: args.password,
-          balance: 5000.00
+        return hashedPassword = bcrypt.hash(args.password, 12)
+        .then(hashedPassword => {
+          const user = new User({
+            name: args.name,
+            email: args.email,
+            password: hashedPassword,
+            balance: 5000.00
+          })
+          return user.save()
         })
-        return user.save()
+        .then(result => {
+          return {...result._doc, password: null, id: result.id}
+        })
       }
     },
     // Refactor createTransaction later. Transactions now update users cash balance and user stocks and return error for any un-met conditionals
