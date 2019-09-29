@@ -14,9 +14,7 @@ const { GraphQLDateTime } = require('graphql-iso-date')
 
 const User = require('../models/user')
 const Transaction = require('../models/transaction')
-
-// const alpha = require('alphavantage')({ key: 'NZUOBHSHQFLTC4VR' })
-// 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSLA&apikey=NZUOBHSHQFLTC4VR'
+const Stock = require('../models/stock')
 
 const axios = require('axios')
 
@@ -33,6 +31,12 @@ const UserType = new GraphQLObjectType({
       resolve(parent, args) {
         return Transaction.find({})
       }
+    },
+    stocks: {
+      type: new GraphQLList(StockType),
+      resolve(parent, args) {
+        return Stock.find({})
+      }
     }
   })
 })
@@ -46,6 +50,22 @@ const TransactionType = new GraphQLObjectType({
     shares: { type: GraphQLInt },
     action: { type: GraphQLString},
     datetime: { type: GraphQLDateTime },
+    user: {
+      type: UserType,
+      resolve(parent, args) {
+        return User.findbyId(parent.userId)
+      }
+    }
+  })
+})
+
+const StockType = new GraphQLObjectType({
+  name: 'Stock',
+  fields: () => ({
+    id: { type: GraphQLID },
+    ticker: { type: GraphQLString },
+    price: { type: GraphQLFloat },
+    shares: { type: GraphQLInt },
     user: {
       type: UserType,
       resolve(parent, args) {
@@ -88,24 +108,7 @@ const RootMutation = new GraphQLObjectType({
         return user.save()
       }
     },
-    updateUser: {
-      type: UserType,
-      args: {
-        name: { type: new GraphQLNonNull(GraphQLString) },
-        email: { type: new GraphQLNonNull(GraphQLString) },
-        password: { type: new GraphQLNonNull(GraphQLString) }
-      },
-      resolve(parent, args) {
-        const user = new User({
-          name: args.name,
-          email: args.email,
-          password: args.password,
-          balance: 5000.00
-        })
-        return user.save()
-      }
-    },
-    // Refactor later, transactions now update users cash balance. Return error for any un-met conditionals
+    // Refactor createTransaction later. Transactions now update users cash balance and user stocks and return error for any un-met conditionals
     createTransaction: {
       type: TransactionType,
       args: {
@@ -119,19 +122,37 @@ const RootMutation = new GraphQLObjectType({
         .then(user => {
           return axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${args.ticker}&apikey=${process.env.API_KEY}`)
             .then(response => {
-              const price = (response.data['Global Quote']['05. price']).toFixed(2)
+              const price = response.data['Global Quote']['05. price']
               if (user.balance > args.shares * price) {
-                user.balance -= (Math.args.shares * price)
-                user.save()
-                const transaction = new Transaction({
-                  ticker: args.ticker,
-                  shares: args.shares,
-                  price: price,
-                  action: args.action,
-                  datetime: new Date(),
-                  userId: args.userId
+                // update stock list
+                return Stock.findOne({ userId: args.userId, ticker: args.ticker})
+                .then(stock => {
+                  if (!stock) {
+                    const stock = new Stock({
+                      ticker: args.ticker,
+                      price: price,
+                      shares: args.shares,
+                      userId: args.userId
+                    })
+                    stock.save()
+                  } else {
+                    stock.shares += args.shares,
+                    stock.price = price
+                    stock.save()
+                  }
+                  // update user balance
+                  user.balance -= (args.shares * price)
+                  user.save()
+                  const transaction = new Transaction({
+                    ticker: args.ticker,
+                    shares: args.shares,
+                    price: price,
+                    action: args.action,
+                    datetime: new Date(),
+                    userId: args.userId
+                  })
+                  return transaction.save()
                 })
-                return transaction.save()
               }
             })
             .catch(console.log)
