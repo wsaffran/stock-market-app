@@ -36,17 +36,15 @@ const UserType = new GraphQLObjectType({
     },
     stocks: {
       type: new GraphQLList(StockType),
-      resolve(parent, args) {
-        Stock.find({userId: parent.id })
-        .then(stocks => {
-          stocks.forEach(stock => {
-            axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.ticker}&apikey=${process.env.API_KEY}`)
-              .then(response => {
-                stock.price = parseFloat(response.data['Global Quote']['05. price']).toFixed(2)
-                stock.openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
-                stock.save()
+      async resolve(parent, args) {
+        const stocks = await Stock.find({userId: parent.id })
+        stocks.forEach(stock => {
+          axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.ticker}&apikey=${process.env.API_KEY}`)
+            .then(response => {
+              stock.price = parseFloat(response.data['Global Quote']['05. price']).toFixed(2)
+              stock.openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
+              stock.save()
             })
-          })
         })
         return Stock.find({ userId: parent.id })
       }
@@ -139,17 +137,15 @@ const RootMutation = new GraphQLObjectType({
         email: { type: new GraphQLNonNull(GraphQLString) },
         password: { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve(parent, args) {
-        return hashedPassword = bcrypt.hash(args.password, 12)
-        .then(hashedPassword => {
-          const user = new User({
-            name: args.name,
-            email: args.email,
-            password: hashedPassword,
-            balance: 5000.00
-          })
-          return user.save()
+      async resolve(parent, args) {
+        const hashedPassword = await bcrypt.hash(args.password, 12)
+        const user = await new User({
+          name: args.name,
+          email: args.email,
+          password: hashedPassword,
+          balance: 5000.00
         })
+        return user.save()
         .then(result => {
           return {...result._doc, password: null, id: result.id}
         })
