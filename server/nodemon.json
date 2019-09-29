@@ -2,6 +2,7 @@
   "env": {
     "MONGO_USER": "willh_saffran",
     "MONGO_PASSWORD": "QSmSgeGYSis4Ecq",
-    "MONGO_DB": "stock-market-app"
+    "MONGO_DB": "stock-market-app",
+    "API_KEY": "NZUOBHSHQFLTC4VR"
   }
 }
