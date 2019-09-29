@@ -138,9 +138,6 @@ const RootMutation = new GraphQLObjectType({
         password: { type: new GraphQLNonNull(GraphQLString) }
       },
       async resolve(parent, args, req) {
-        if (!req.isAuth) {
-          throw new Error('Unauthenticated')
-        }
         const hashedPassword = await bcrypt.hash(args.password, 12)
         const user = await new User({
           name: args.name,
