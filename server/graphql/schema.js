@@ -15,6 +15,11 @@ const { GraphQLDateTime } = require('graphql-iso-date')
 const User = require('../models/user')
 const Transaction = require('../models/transaction')
 
+// const alpha = require('alphavantage')({ key: 'NZUOBHSHQFLTC4VR' })
+// 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSLA&apikey=NZUOBHSHQFLTC4VR'
+
+const axios = require('axios')
+
 const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
@@ -27,12 +32,6 @@ const UserType = new GraphQLObjectType({
       type: new GraphQLList(TransactionType),
       resolve(parent, args) {
         return Transaction.find({})
-      }
-    },
-    stocks: {
-      type: new GraphQLList(StockType),
-      resolve(parent, args) {
-        return Stock.find({})
       }
     }
   })
@@ -53,15 +52,6 @@ const TransactionType = new GraphQLObjectType({
         return User.findbyId(parent.userId)
       }
     }
-  })
-})
-
-const StockType = new GraphQLObjectType({
-  name: 'Stock',
-  fields: () => ({
-    id: { type: GraphQLID },
-    ticker: { type: GraphQLString },
-    shares: { type: GraphQLInt }
   })
 })
 
@@ -98,25 +88,55 @@ const RootMutation = new GraphQLObjectType({
         return user.save()
       }
     },
+    updateUser: {
+      type: UserType,
+      args: {
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        const user = new User({
+          name: args.name,
+          email: args.email,
+          password: args.password,
+          balance: 5000.00
+        })
+        return user.save()
+      }
+    },
+    // Refactor later, transactions now update users cash balance. Return error for any un-met conditionals
     createTransaction: {
       type: TransactionType,
       args: {
         ticker: { type: new GraphQLNonNull(GraphQLString) },
         shares: { type: new GraphQLNonNull(GraphQLInt) },
-        price: { type: new GraphQLNonNull(GraphQLFloat) },
         action: { type: new GraphQLNonNull(GraphQLString) },
         userId: { type: new GraphQLNonNull(GraphQLID) }
       },
       resolve(parent, args) {
-        const transaction = new Transaction({
-          ticker: args.ticker,
-          shares: args.shares,
-          price: args.price,
-          action: args.action,
-          datetime: new Date(),
-          userId: args.userId
+        return User.findById(args.userId)
+        .then(user => {
+          return axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${args.ticker}&apikey=${process.env.API_KEY}`)
+            .then(response => {
+              const price = (response.data['Global Quote']['05. price']).toFixed(2)
+              if (user.balance > args.shares * price) {
+                user.balance -= (Math.args.shares * price)
+                user.save()
+                const transaction = new Transaction({
+                  ticker: args.ticker,
+                  shares: args.shares,
+                  price: price,
+                  action: args.action,
+                  datetime: new Date(),
+                  userId: args.userId
+                })
+                return transaction.save()
+              }
+            })
+            .catch(console.log)
         })
-        return transaction.save()
+        .catch(console.log)
       }
     }
   }
