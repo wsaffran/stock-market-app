@@ -16,6 +16,10 @@ const stockSchema = new Schema({
   price: {
     type: Number,
     required: true
+  },
+  openPrice: {
+    type: Number,
+    required: true
   }
 })
 
