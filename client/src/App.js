@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom'
 import './App.css';
 
 import AuthPage from './components/Auth'
+import Portfolio from './components/Portfolio'
 
 class App extends React.Component {
 
@@ -38,7 +39,7 @@ class App extends React.Component {
     return (
       <BrowserRouter>
         <Switch>
-          {this.state.token && <Route path="/portfolio" component={null} />}
+          {this.state.token && <Route path="/portfolio" component={Portfolio} />}
           {this.state.token && <Route path="/transactions" component={null} />}
           {!this.state.token && <Route path="/auth" render={ (routeProps) => {
             return <AuthPage login={this.login}/>
