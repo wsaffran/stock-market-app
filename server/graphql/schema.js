@@ -39,7 +39,7 @@ const UserType = new GraphQLObjectType({
       async resolve(parent, args) {
         const stocks = await Stock.find({userId: parent.id })
         stocks.forEach(stock => {
-          axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.ticker}&apikey=${process.env.API_KEY}`)
+          return axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.ticker}&apikey=${process.env.API_KEY}`)
             .then(response => {
               stock.price = parseFloat(response.data['Global Quote']['05. price']).toFixed(2)
               stock.openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
@@ -169,7 +169,6 @@ const RootMutation = new GraphQLObjectType({
         .then(user => {
           return axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${args.ticker}&apikey=${process.env.API_KEY}`)
             .then(response => {
-              console.log(response.data['Global Quote']);
               const price = parseFloat(response.data['Global Quote']['05. price']).toFixed(2)
               const openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
               if (user.balance > args.shares * price) {
