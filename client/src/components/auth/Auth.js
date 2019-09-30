@@ -15,7 +15,7 @@ class AuthPage extends Component {
 
   render() {
     return(
-      <>
+      <React.Fragment>
         {this.state.isSignIn ?
           <div>
             <h1>Sign In!</h1>
@@ -33,7 +33,7 @@ class AuthPage extends Component {
             :
             'Already have an account? Sign In'}
         </button>
-      </>
+      </React.Fragment>
     )
   }
 }
