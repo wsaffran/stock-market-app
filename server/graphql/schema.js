@@ -45,6 +45,7 @@ const UserType = new GraphQLObjectType({
               stock.openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
               stock.save()
             })
+            .catch(console.log)
         })
         return Stock.find({ userId: parent.id })
       }
@@ -124,19 +125,6 @@ const RootQuery = new GraphQLObjectType({
         return { userId: user.id, token: token }
       }
     }
-    // ,
-    // autoLogin: {
-    //   type: AuthData,
-    //   args: {
-    //     token: { type: GraphQLString },
-    //   },
-    //   async resolve(parent, args) {
-    //     const verified = jwt.verify(args.token, 'secretKey')
-    //     if (verified) {
-    //       const
-    //     }
-    //   }
-    // }
   }
 })
 
@@ -181,6 +169,7 @@ const RootMutation = new GraphQLObjectType({
         .then(user => {
           return axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${args.ticker}&apikey=${process.env.API_KEY}`)
             .then(response => {
+              console.log(response.data['Global Quote']);
               const price = parseFloat(response.data['Global Quote']['05. price']).toFixed(2)
               const openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
               if (user.balance > args.shares * price) {
