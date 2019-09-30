@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
+import AuthContext from '../context/auth-context'
 
 class SignIn extends Component {
   state = {
     email: '',
     password: ''
   }
+
+  static contextType = AuthContext
 
   handleChange = (event) => {
     this.setState({
@@ -24,6 +27,7 @@ class SignIn extends Component {
         {
           login(email: "${this.state.email}", password: "${this.state.password}") {
             token
+            userId
           }
         }
       `
@@ -43,7 +47,9 @@ class SignIn extends Component {
       return res.json()
     })
     .then(resData => {
-      console.log(resData);
+      if (resData.data.login.token) {
+        this.context.login(resData.data.login.token, resData.data.login.userId)
+      }
     })
     .catch(console.log)
   }
