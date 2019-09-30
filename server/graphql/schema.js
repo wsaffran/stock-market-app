@@ -124,6 +124,19 @@ const RootQuery = new GraphQLObjectType({
         return { userId: user.id, token: token }
       }
     }
+    // ,
+    // autoLogin: {
+    //   type: AuthData,
+    //   args: {
+    //     token: { type: GraphQLString },
+    //   },
+    //   async resolve(parent, args) {
+    //     const verified = jwt.verify(args.token, 'secretKey')
+    //     if (verified) {
+    //       const
+    //     }
+    //   }
+    // }
   }
 })
 
