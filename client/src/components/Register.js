@@ -13,9 +13,7 @@ class Register extends Component {
     })
   }
 
-  handleSubmit = (event) => {
-    event.preventDefault()
-
+  handleSubmit = () => {
     if (this.state.email.trim().length === 0 || this.state.password.trim().length === 0 || this.state.name.trim().length === 0) {
       return
     }
