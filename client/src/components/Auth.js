@@ -14,13 +14,12 @@ class AuthPage extends Component {
   }
 
   render() {
-    console.log(this.state);
     return(
       <>
         {this.state.isSignIn ?
           <div>
             <h1>Sign In!</h1>
-            <SignIn />
+            <SignIn login={this.props.login}/>
           </div>
           :
           <div>
