@@ -17,6 +17,7 @@ const Transaction = require('../models/transaction')
 const Stock = require('../models/stock')
 
 const axios = require('axios')
+const alpha = require('alphavantage')({ key: 'NZUOBHSHQFLTC4VR' })
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -31,23 +32,31 @@ const UserType = new GraphQLObjectType({
     transactions: {
       type: new GraphQLList(TransactionType),
       resolve(parent, args) {
-        return Transaction.find({ userId: parent.id})
+        try {
+          return Transaction.find({ userId: parent.id})
+        } catch (err) {
+          throw err
+        }
       }
     },
     stocks: {
       type: new GraphQLList(StockType),
       async resolve(parent, args) {
-        const stocks = await Stock.find({userId: parent.id })
-        stocks.forEach(stock => {
-          return axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.ticker}&apikey=${process.env.API_KEY}`)
+        try {
+          const stocks = await Stock.find({userId: parent.id })
+          stocks.forEach(stock => {
+            axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.ticker}&apikey=${process.env.API_KEY}`)
             .then(response => {
-              stock.price = parseFloat(response.data['Global Quote']['05. price']).toFixed(2)
-              stock.openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
+              stock.price = parseFloat(response.data['Global Quote']['05. price'])
+              stock.openPrice = parseFloat(response.data['Global Quote']['02. open'])
               stock.save()
             })
             .catch(console.log)
-        })
-        return Stock.find({ userId: parent.id })
+          })
+            return Stock.find({ userId: parent.id })
+        } catch (err) {
+          throw err
+        }
       }
     }
   })
@@ -65,7 +74,11 @@ const TransactionType = new GraphQLObjectType({
     user: {
       type: UserType,
       resolve(parent, args) {
-        return User.findbyId(parent.userId)
+        try {
+          return User.findbyId(parent.userId)
+        } catch (err) {
+          throw err
+        }
       }
     }
   })
@@ -82,7 +95,11 @@ const StockType = new GraphQLObjectType({
     user: {
       type: UserType,
       resolve(parent, args) {
-        return User.findbyId(parent.userId)
+        try {
+          return User.findbyId(parent.userId)
+        } catch (err) {
+          throw err
+        }
       }
     }
   })
@@ -103,7 +120,11 @@ const RootQuery = new GraphQLObjectType({
       type: UserType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        return User.findById(args.id)
+        try {
+          return User.findById(args.id)
+        } catch (err) {
+          throw err
+        }
       }
     },
     login: {
@@ -113,16 +134,20 @@ const RootQuery = new GraphQLObjectType({
         password: { type: GraphQLString }
       },
       async resolve(parent, args) {
-        const user = await User.findOne({ email: args.email })
-        if (!user) {
-          throw new Error("User does not exist");
+        try {
+          const user = await User.findOne({ email: args.email })
+          if (!user) {
+            throw new Error("User does not exist");
+          }
+          const isEqual = await bcrypt.compare(args.password, user.password)
+          if (!isEqual) {
+            throw new Error('Password is incorrect!')
+          }
+          const token = jwt.sign({userId: user.id, email: user.email}, 'secretKey')
+          return { userId: user.id, token: token }
+        } catch (err) {
+          throw err
         }
-        const isEqual = await bcrypt.compare(args.password, user.password)
-        if (!isEqual) {
-          throw new Error('Password is incorrect!')
-        }
-        const token = jwt.sign({userId: user.id, email: user.email}, 'secretKey')
-        return { userId: user.id, token: token }
       }
     }
   }
@@ -139,20 +164,23 @@ const RootMutation = new GraphQLObjectType({
         password: { type: new GraphQLNonNull(GraphQLString) }
       },
       async resolve(parent, args, req) {
-        const hashedPassword = await bcrypt.hash(args.password, 12)
-        const user = await new User({
-          name: args.name,
-          email: args.email,
-          password: hashedPassword,
-          balance: 5000.00
-        })
-        return user.save()
-        .then(result => {
-          return {...result._doc, password: null, id: result.id}
-        })
+        try {
+          const hashedPassword = await bcrypt.hash(args.password, 12)
+          const user = await new User({
+            name: args.name,
+            email: args.email,
+            password: hashedPassword,
+            balance: 5000.00
+          })
+          return user.save()
+          .then(result => {
+            return {...result._doc, password: null, id: result.id}
+          })
+        } catch (err) {
+          throw err
+        }
       }
     },
-    // Refactor createTransaction later. Transactions now update users cash balance and user stocks and return error for any un-met conditionals
     createTransaction: {
       type: TransactionType,
       args: {
@@ -161,53 +189,49 @@ const RootMutation = new GraphQLObjectType({
         action: { type: new GraphQLNonNull(GraphQLString) },
         userId: { type: new GraphQLNonNull(GraphQLID) }
       },
-      resolve(parent, args, req) {
-        if (!req.isAuth) {
-          throw new Error('Unauthenticated')
-        }
-        return User.findById(args.userId)
-        .then(user => {
-          return axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${args.ticker}&apikey=${process.env.API_KEY}`)
-            .then(response => {
-              const price = parseFloat(response.data['Global Quote']['05. price']).toFixed(2)
-              const openPrice = parseFloat(response.data['Global Quote']['02. open']).toFixed(2)
-              if (user.balance > args.shares * price) {
-                // update stock list
-                return Stock.findOne({ userId: args.userId, ticker: args.ticker})
-                .then(stock => {
-                  if (!stock) {
-                    const stock = new Stock({
-                      ticker: args.ticker,
-                      price: price,
-                      openPrice: openPrice,
-                      shares: args.shares,
-                      userId: args.userId
-                    })
-                    stock.save()
-                  } else {
-                    stock.shares += args.shares,
-                    stock.price = price
-                    stock.openPrice = openPrice
-                    stock.save()
-                  }
-                  // update user balance
-                  user.balance -= (args.shares * price)
-                  user.save()
-                  const transaction = new Transaction({
-                    ticker: args.ticker,
-                    shares: args.shares,
-                    price: price,
-                    action: args.action,
-                    datetime: new Date(),
-                    userId: args.userId
-                  })
-                  return transaction.save()
-                })
-              }
+      async resolve(parent, args, req) {
+        try {
+          if (!req.isAuth) {
+            throw new Error('Unauthenticated')
+          }
+          const user = await User.findById(args.userId)
+          const data = await alpha.data.quote(`${args.ticker}`)
+          const price = parseFloat(data['Global Quote']['05. price'])
+          const openPrice = parseFloat(data['Global Quote']['02. open'])
+          if (user.balance > args.shares * price) {
+            let stock = await Stock.findOne({userId: args.userId, ticker: args.ticker})
+            if (!stock) {
+              stock = new Stock({
+                ticker: args.ticker,
+                price: price,
+                openPrice: openPrice,
+                shares: args.shares,
+                userId: args.userId
+              })
+              stock.save()
+            } else {
+              stock.shares += args.shares
+              stock.price = price
+              stock.openPrice = openPrice
+              stock.save()
+            }
+            user.balance -= args.shares * price
+            user.save()
+            const transaction = new Transaction({
+              ticker: args.ticker,
+              shares: args.shares,
+              price: price,
+              action: args.action,
+              datetime: new Date(),
+              userId: args.userId
             })
-            .catch(console.log)
-        })
-        .catch(console.log)
+            return transaction.save()
+          } else {
+            throw new Error('Not enough money!')
+          }
+        } catch (err) {
+          throw err
+        }
       }
     }
   }
