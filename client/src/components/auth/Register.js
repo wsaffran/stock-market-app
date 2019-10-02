@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import './Auth.css'
 
 class Register extends Component {
   state = {
@@ -51,16 +52,13 @@ class Register extends Component {
     return(
       <form onSubmit={this.handleSubmit}>
         <div>
-          <label htmlFor="name">Name</label>
-          <input onChange={this.handleChange} type="text" name="name" value={this.state.name} />
+          <input onChange={this.handleChange} type="text" name="name" placeholder="Name" value={this.state.name} />
         </div>
         <div>
-          <label htmlFor="email">Email</label>
-          <input onChange={this.handleChange} type="email" name="email" value={this.state.email} />
+          <input onChange={this.handleChange} type="email" name="email" placeholder="Email" value={this.state.email} />
         </div>
         <div>
-          <label htmlFor="password">Password</label>
-          <input onChange={this.handleChange} type="password" name="password" value={this.state.password} />
+          <input onChange={this.handleChange} type="password" name="password" placeholder="Password" value={this.state.password} />
         </div>
         <button type="submit">Submit</button>
       </form>

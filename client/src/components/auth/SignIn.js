@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import './Auth.css'
 
 class SignIn extends Component {
   state = {
@@ -55,14 +56,12 @@ class SignIn extends Component {
     return(
       <form onSubmit={this.handleSubmit}>
         <div>
-          <label htmlFor="email">Email</label>
-          <input onChange={this.handleChange} type="email" name="email" value={this.state.email} />
+          <input onChange={this.handleChange} type="email" name="email" placeholder="email" value={this.state.email} />
         </div>
         <div>
-          <label htmlFor="password">Password</label>
-          <input onChange={this.handleChange} type="password" name="password" value={this.state.password} />
+          <input onChange={this.handleChange} type="password" name="password" placeholder="password" value={this.state.password} />
         </div>
-        <button type="submit">Submit</button>
+        <button className="button" type="submit">Submit</button>
       </form>
     )
   }
