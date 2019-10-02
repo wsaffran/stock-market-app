@@ -5,7 +5,7 @@ class PortfolioForm extends Component {
 
   state = {
     ticker: "",
-    quantity: 0
+    quantity: ""
   }
 
   handleChange = (event) => {
@@ -56,16 +56,14 @@ class PortfolioForm extends Component {
 
   render() {
     return(
-      <div className="form-wrapper">
+      <div className="form">
         <h3>Cash - ${this.props.balance.toFixed(2)}</h3>
         <form onSubmit={this.handleSubmit}>
           <div>
-            <label htmlFor="ticker">Ticker</label>
-            <input onChange={this.handleChange} type="text" name="ticker" value={this.state.ticker} />
+            <input onChange={this.handleChange} type="text" name="ticker" placeholder="Ticker" value={this.state.ticker} />
           </div>
           <div>
-            <label htmlFor="quantity">Quantity</label>
-            <input onChange={this.handleChange} type="number" name="quantity" value={this.state.quantity} />
+            <input onChange={this.handleChange} type="number" name="quantity" placeholder="Quantity" min="1" value={this.state.quantity} />
           </div>
           <button type="submit">Buy</button>
         </form>
