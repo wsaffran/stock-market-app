@@ -1,0 +1,21 @@
+h1 {
+  text-align: center;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+}
+
+.left {
+  border-right: 2px solid black;
+}

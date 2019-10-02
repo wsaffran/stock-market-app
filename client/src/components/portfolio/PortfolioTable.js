@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
+import './PortfolioTable.css'
 
 class PortfolioTable extends Component {
 
   renderStocks = (stocks) => {
-    let color
+    let color, share
     return stocks.map(stock => {
       if (stock.openPrice > stock.price) {
         color = "red"
@@ -12,15 +13,27 @@ class PortfolioTable extends Component {
       } else {
         color = "grey"
       }
-      return <p key={stock.ticker}>{(stock.ticker).toUpperCase()} {stock.shares} <span style={{color: color}}>${(stock.price * stock.shares).toFixed(2)}</span></p>
+      if (stock.shares > 1) {
+        share = "shares"
+      } else {
+        share = "share"
+      }
+      return (
+        <tr key={stock.ticker}>
+          <td className="ticker" >{(stock.ticker).toUpperCase()} {stock.shares} {share}</td>
+          <td className="value" style={{color: color}}>${(stock.price * stock.shares).toFixed(2)}</td>
+        </tr>
+      )
     })
   }
 
   render() {
     return(
-      <div>
-        {this.renderStocks(this.props.stocks)}
-      </div>
+      <table>
+        <tbody>
+          {this.renderStocks(this.props.stocks)}
+        </tbody>
+      </table>
     )
   }
 }

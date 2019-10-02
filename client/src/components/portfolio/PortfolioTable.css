@@ -1,0 +1,19 @@
+td {
+  height: 3rem;
+  border-bottom: 1px solid #ddd;
+}
+
+table {
+  border-collapse: collapse;
+  margin-right: 3rem;
+}
+
+.ticker {
+  text-align: left;
+  padding-left: 1rem;
+}
+
+.value {
+  text-align: right;
+  padding-right: 1rem;
+}

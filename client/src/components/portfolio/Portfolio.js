@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import PortfolioTable from './PortfolioTable'
 import PortfolioForm from './PortfolioForm'
+import './Portfolio.css'
 
 class Portfolio extends Component {
 
@@ -55,17 +56,23 @@ class Portfolio extends Component {
 
   render() {
     return(
-      <div>
+      <React.Fragment>
         {this.state.isLoading ?
           null
           :
-          <div>
-          <h1>Portfolio</h1>
-          {this.state.balance && <PortfolioTable balance={this.state.balance} stocks={this.state.stocks}/>}
-          {this.state.balance && <PortfolioForm balance={this.state.balance} />}
+          <div className="some-page-wrapper">
+            <h1>Portfolio</h1>
+            <div className="row">
+              <div className="column left">
+                {this.state.balance && <PortfolioTable balance={this.state.balance} stocks={this.state.stocks}/>}
+              </div>
+              <div className="column right">
+                {this.state.balance && <PortfolioForm balance={this.state.balance} />}
+              </div>
+            </div>
           </div>
         }
-      </div>
+      </React.Fragment>
     )
   }
 }

@@ -1,0 +1,9 @@
+td {
+  height: 3rem;
+  border-bottom: 1px solid #ddd;
+}
+
+table {
+  border-collapse: collapse;
+  margin-right: 3rem;
+}
