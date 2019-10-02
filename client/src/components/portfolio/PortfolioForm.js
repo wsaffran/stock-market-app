@@ -57,7 +57,7 @@ class PortfolioForm extends Component {
   render() {
     return(
       <div className="form">
-        <h3>Cash - ${this.props.balance.toFixed(2)}</h3>
+        <h3>Cash - ${this.props.balance}</h3>
         <form onSubmit={this.handleSubmit}>
           <div>
             <input onChange={this.handleChange} type="text" name="ticker" placeholder="Ticker" value={this.state.ticker} />

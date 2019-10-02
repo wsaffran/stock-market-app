@@ -52,16 +52,16 @@ class Transactions extends Component {
 
   render() {
     return(
-      <div>
+      <React.Fragment>
         {this.state.isLoading ?
           null
           :
-          <div>
+          <div className="transactions">
             <h1>Transactions</h1>
             {this.state.transactions && <TransactionsTable transactions={this.state.transactions} />}
           </div>
         }
-      </div>
+      </React.Fragment>
     )
   }
 }

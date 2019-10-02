@@ -3,6 +3,10 @@ import './PortfolioTable.css'
 
 class PortfolioTable extends Component {
 
+  formatNumber = x => {
+    return x.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   renderStocks = (stocks) => {
     let color, share
     return stocks.map(stock => {
@@ -21,7 +25,7 @@ class PortfolioTable extends Component {
       return (
         <tr key={stock.ticker}>
           <td className="ticker" >{(stock.ticker).toUpperCase()} {stock.shares} {share}</td>
-          <td className="value" style={{color: color}}>${(stock.price * stock.shares).toFixed(2)}</td>
+          <td className="value" style={{color: color}}>${this.formatNumber(stock.price * stock.shares)}</td>
         </tr>
       )
     })
@@ -29,7 +33,7 @@ class PortfolioTable extends Component {
 
   render() {
     return(
-      <table>
+      <table className="table">
         <tbody>
           {this.renderStocks(this.props.stocks)}
         </tbody>

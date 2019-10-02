@@ -12,6 +12,10 @@ class Portfolio extends Component {
     stocks: []
   }
 
+  formatNumber = x => {
+    return x.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   componentDidMount() {
     const requestBody = {
       query: `
@@ -64,10 +68,10 @@ class Portfolio extends Component {
             <h1>Portfolio</h1>
             <div className="row">
               <div className="column left">
-                {this.state.balance && <PortfolioTable balance={this.state.balance} stocks={this.state.stocks}/>}
+                {this.state.balance && <PortfolioTable balance={this.formatNumber(this.state.balance)} stocks={this.state.stocks}/>}
               </div>
               <div className="column right">
-                {this.state.balance && <PortfolioForm balance={this.state.balance} />}
+                {this.state.balance && <PortfolioForm balance={this.formatNumber(this.state.balance)} />}
               </div>
             </div>
           </div>
