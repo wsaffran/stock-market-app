@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import './PortfolioForm.css'
 
 class PortfolioForm extends Component {
 
@@ -55,7 +56,7 @@ class PortfolioForm extends Component {
 
   render() {
     return(
-      <div>
+      <div className="form-wrapper">
         <h3>Cash - ${this.props.balance.toFixed(2)}</h3>
         <form onSubmit={this.handleSubmit}>
           <div>

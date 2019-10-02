@@ -1,18 +1,25 @@
 import React, { Component } from 'react'
+import './TransactionTable.css'
 
 class TransactionsTable extends Component {
 
   renderTransactions = (transactions) => {
     return transactions.reverse().map(transaction => {
-      return <p key={transaction.datetime}>{(transaction.action).toUpperCase()} ({transaction.ticker}) - {transaction.shares} shares @ ${transaction.price.toFixed(2)}</p>
+      return (
+        <tr key={transaction.datetime}>
+          <td>{(transaction.action).toUpperCase()} ({(transaction.ticker).toUpperCase()}) - {transaction.shares} shares @ ${transaction.price.toFixed(2)}</td>
+        </tr>
+      )
     })
   }
 
   render() {
     return(
-      <div>
-        {this.renderTransactions(this.props.transactions)}
-      </div>
+      <table>
+        <tbody>
+          {this.renderTransactions(this.props.transactions)}
+        </tbody>
+      </table>
     )
   }
 }

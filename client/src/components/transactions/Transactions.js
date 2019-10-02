@@ -57,8 +57,8 @@ class Transactions extends Component {
           null
           :
           <div>
-          <h1>Transactions</h1>
-          {this.state.transactions && <TransactionsTable transactions={this.state.transactions} />}
+            <h1>Transactions</h1>
+            {this.state.transactions && <TransactionsTable transactions={this.state.transactions} />}
           </div>
         }
       </div>
