@@ -50,6 +50,7 @@ class PortfolioForm extends Component {
         // temporary fix, make dynamic through state
         window.location.reload();
       }
+
     })
     .catch(console.log)
   }
@@ -59,12 +60,20 @@ class PortfolioForm extends Component {
       <div className="portfolio-form">
         <h3>Cash - ${this.props.balance}</h3>
         <form onSubmit={this.handleSubmit}>
-          <div>
-            <input onChange={this.handleChange} type="text" name="ticker" placeholder="Ticker" value={this.state.ticker} />
-          </div>
-          <div>
-            <input onChange={this.handleChange} type="number" name="quantity" placeholder="Quantity" min="1" value={this.state.quantity} />
-          </div>
+            <input
+              onChange={this.handleChange}
+              type="text"
+              name="ticker"
+              placeholder="Ticker"
+              value={this.state.ticker} />
+            <div>{this.state.tickerError}</div>
+            <input
+              onChange={this.handleChange}
+              type="number"
+              name="quantity"
+              placeholder="Quantity"
+              min="1"
+              value={this.state.quantity} />
           <button className="button" type="submit">Buy</button>
         </form>
       </div>

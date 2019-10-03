@@ -4,12 +4,14 @@ import './Auth.css'
 class SignIn extends Component {
   state = {
     email: '',
-    password: ''
+    password: '',
+    authFailed: false
   }
 
   handleChange = (event) => {
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
+      authFailed: false
     })
   }
 
@@ -45,8 +47,14 @@ class SignIn extends Component {
       return res.json()
     })
     .then(resData => {
-      if (resData.data.login.token && resData.data.login.userId) {
+      if (resData.data.login) {
         this.props.login(resData.data.login.token, resData.data.login.userId)
+      } else {
+        this.setState({
+          email: '',
+          password: '',
+          authFailed: true
+        })
       }
     })
     .catch(console.log)
@@ -55,12 +63,9 @@ class SignIn extends Component {
   render() {
     return(
       <form onSubmit={this.handleSubmit}>
-        <div>
-          <input onChange={this.handleChange} type="email" name="email" placeholder="email" value={this.state.email} />
-        </div>
-        <div>
-          <input onChange={this.handleChange} type="password" name="password" placeholder="password" value={this.state.password} />
-        </div>
+        {this.state.authFailed && <p style={{color: "red"}}>Authentication Failed</p>}
+        <input onChange={this.handleChange} type="email" name="email" placeholder="email" value={this.state.email} />
+        <input onChange={this.handleChange} type="password" name="password" placeholder="password" value={this.state.password} />
         <button className="button" type="submit">Submit</button>
       </form>
     )
