@@ -24,7 +24,7 @@ class PortfolioForm extends Component {
     const requestBody = {
       query: `
         mutation {
-          createTransaction(userId: "${localStorage.getItem("userId")}", ticker: "${this.state.ticker}", shares: ${this.state.quantity}, action: "buy") {
+          createTransaction(userId: "${localStorage.getItem("userId")}", ticker: "${this.state.ticker.toUpperCase()}", shares: ${this.state.quantity}, action: "buy") {
             ticker
           }
         }
@@ -47,8 +47,11 @@ class PortfolioForm extends Component {
     })
     .then(resData => {
       if (resData.data.createTransaction) {
-        // temporary fix, make dynamic through state
-        window.location.reload();
+        this.props.renderUser()
+        this.setState({
+          ticker: "",
+          quantity: ""
+        })
       }
 
     })
@@ -59,22 +62,22 @@ class PortfolioForm extends Component {
     return(
       <div className="portfolio-form">
         <h3>Cash - ${this.props.balance}</h3>
-        <form onSubmit={this.handleSubmit}>
-            <input
-              onChange={this.handleChange}
-              type="text"
-              name="ticker"
-              placeholder="Ticker"
-              value={this.state.ticker} />
-            <div>{this.state.tickerError}</div>
-            <input
-              onChange={this.handleChange}
-              type="number"
-              name="quantity"
-              placeholder="Quantity"
-              min="1"
-              value={this.state.quantity} />
-          <button className="button" type="submit">Buy</button>
+        <form className="portfolio-form__form" onSubmit={this.handleSubmit}>
+          <input
+            onChange={this.handleChange}
+            type="text"
+            name="ticker"
+            placeholder="Ticker"
+            value={this.state.ticker} />
+          <div>{this.state.tickerError}</div>
+          <input
+            onChange={this.handleChange}
+            type="number"
+            name="quantity"
+            placeholder="Quantity"
+            min="1"
+            value={this.state.quantity} /><br></br>
+          <button className= "button" type="submit">Buy</button>
         </form>
       </div>
     )

@@ -65,8 +65,8 @@ class SignIn extends Component {
       <form onSubmit={this.handleSubmit}>
         {this.state.authFailed && <p style={{color: "red"}}>Authentication Failed</p>}
         <input onChange={this.handleChange} type="email" name="email" placeholder="email" value={this.state.email} />
-        <input onChange={this.handleChange} type="password" name="password" placeholder="password" value={this.state.password} />
-        <button className="button" type="submit">Submit</button>
+        <input onChange={this.handleChange} type="password" name="password" placeholder="password" value={this.state.password} /><br></br>
+        <button className="auth__button button" type="submit">Submit</button>
       </form>
     )
   }
