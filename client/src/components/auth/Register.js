@@ -5,7 +5,8 @@ class Register extends Component {
   state = {
     name: '',
     email: '',
-    password: ''
+    password: '',
+    error: false
   }
 
   handleChange = (event) => {
@@ -14,7 +15,9 @@ class Register extends Component {
     })
   }
 
-  handleSubmit = () => {
+  handleSubmit = (e) => {
+    e.preventDefault()
+
     if (this.state.email.trim().length === 0 || this.state.password.trim().length === 0 || this.state.name.trim().length === 0) {
       return
     }
@@ -24,6 +27,7 @@ class Register extends Component {
         mutation {
           createUser(name: "${this.state.name}", email: "${this.state.email}", password: "${this.state.password}") {
             id
+            email
           }
         }
       `
@@ -43,7 +47,12 @@ class Register extends Component {
       return res.json()
     })
     .then(resData => {
-      console.log(resData);
+      if (!resData.data.createUser) {
+        this.setState({error: true})
+      } else {
+        // figure out this.props.history
+        window.location.reload();
+      }
     })
     .catch(console.log)
   }
@@ -51,15 +60,10 @@ class Register extends Component {
   render() {
     return(
       <form onSubmit={this.handleSubmit}>
-        <div>
-          <input onChange={this.handleChange} type="text" name="name" placeholder="Name" value={this.state.name} />
-        </div>
-        <div>
-          <input onChange={this.handleChange} type="email" name="email" placeholder="Email" value={this.state.email} />
-        </div>
-        <div>
-          <input onChange={this.handleChange} type="password" name="password" placeholder="Password" value={this.state.password} />
-        </div>
+        {this.state.error && <p style={{color: "red"}}>Account with this email already exists</p>}
+        <input onChange={this.handleChange} type="text" name="name" placeholder="Name" value={this.state.name} />
+        <input onChange={this.handleChange} type="email" name="email" placeholder="Email" value={this.state.email} />
+        <input onChange={this.handleChange} type="password" name="password" placeholder="Password" value={this.state.password} />
         <button className="button" type="submit">Submit</button>
       </form>
     )
