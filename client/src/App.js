@@ -21,17 +21,6 @@ class App extends React.Component {
     this.setState({})
   }
 
-  // componentDidMount() {
-  //   const token = localStorage.getItem("token")
-  //   const userId = localStorage.getItem("userId")
-  //   if (token && userId) {
-  //     this.setState({
-  //       token: token,
-  //       userId: userId
-  //     })
-  //   }
-  // }
-
   render() {
     return (
       <BrowserRouter>

@@ -60,7 +60,7 @@ class Register extends Component {
         <div>
           <input onChange={this.handleChange} type="password" name="password" placeholder="Password" value={this.state.password} />
         </div>
-        <button type="submit">Submit</button>
+        <button className="button" type="submit">Submit</button>
       </form>
     )
   }

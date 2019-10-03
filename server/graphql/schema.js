@@ -9,17 +9,15 @@ const {
   GraphQLDate,
   GraphQLSchema
 } = require('graphql')
-
 const { GraphQLDateTime } = require('graphql-iso-date')
+const axios = require('axios')
+const alpha = require('alphavantage')({ key: process.env.API_KEY })
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const User = require('../models/user')
 const Transaction = require('../models/transaction')
 const Stock = require('../models/stock')
-
-const axios = require('axios')
-const alpha = require('alphavantage')({ key: 'NZUOBHSHQFLTC4VR' })
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
 
 const UserType = new GraphQLObjectType({
   name: 'User',
@@ -143,7 +141,7 @@ const RootQuery = new GraphQLObjectType({
           if (!isEqual) {
             throw new Error('Password is incorrect!')
           }
-          const token = jwt.sign({userId: user.id, email: user.email}, 'secretKey')
+          const token = jwt.sign({userId: user.id, email: user.email}, `${process.env.JWT_KEY}`)
           return { userId: user.id, token: token }
         } catch (err) {
           throw err

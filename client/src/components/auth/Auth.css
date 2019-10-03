@@ -1,41 +1,22 @@
-form {
-  margin: 0 25% 0 25%;
+.auth-container {
+  padding-top: .05rem;
+  margin-left: 25%;
+  margin-right: 25%;
   border-radius: 5px;
   background-color: #f2f2f2;
-  padding: 1.5rem 0 1.5rem 0;
+  padding-bottom: 1rem;
   text-align: center;
 }
 
-input[type=text],
-input[type=email],
-input[type=password],
-input[type=number],
-select {
-  width: 80%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+.link {
+  text-decoration: underline;
+  color: blue;
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.button {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: .75rem 2rem .75rem 2rem;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin-top: .5rem;
-  border-radius: 5px;
+.link:hover {
   cursor: pointer;
+}
+
+.p {
+  margin-left: 25%;
 }

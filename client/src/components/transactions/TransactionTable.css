@@ -1,12 +1,17 @@
-td {
+.td {
   height: 3rem;
   border-bottom: 1px solid #ddd;
-  letter-spacing: 1px;
 }
 
-table {
-  margin-left: 20%;
-  width: auto;
+.transactions-table {
+  width: 100%;
   border-collapse: collapse;
-  margin-right: 3rem;
+}
+
+.transactions-table__ticker {
+  text-align: left;
+}
+
+.transactions-table__price {
+  text-align: right;
 }

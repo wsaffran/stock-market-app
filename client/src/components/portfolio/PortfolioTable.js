@@ -24,8 +24,9 @@ class PortfolioTable extends Component {
       }
       return (
         <tr key={stock.ticker}>
-          <td className="ticker" >{(stock.ticker).toUpperCase()} {stock.shares} {share}</td>
-          <td className="value" style={{color: color}}>${this.formatNumber(stock.price * stock.shares)}</td>
+          <td className="portfolio-table__ticker td" >{(stock.ticker).toUpperCase()}</td>
+          <td className="portfolio-table__shares td" >{stock.shares} {share}</td>
+          <td className="portfolio-table__value td" style={{color: color}}>${this.formatNumber(stock.price * stock.shares)}</td>
         </tr>
       )
     })
@@ -33,11 +34,13 @@ class PortfolioTable extends Component {
 
   render() {
     return(
-      <table className="table">
-        <tbody>
-          {this.renderStocks(this.props.stocks)}
-        </tbody>
-      </table>
+      <React.Fragment>
+        <table className="portfolio-table">
+          <tbody>
+            {this.renderStocks(this.props.stocks)}
+          </tbody>
+        </table>
+      </React.Fragment>
     )
   }
 }

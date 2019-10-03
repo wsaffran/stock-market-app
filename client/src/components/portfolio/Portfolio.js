@@ -9,6 +9,7 @@ class Portfolio extends Component {
   state = {
     isLoading: true,
     balance: null,
+    total: null,
     stocks: []
   }
 
@@ -48,9 +49,14 @@ class Portfolio extends Component {
     })
     .then(resData => {
       if (resData.data) {
+        let total = resData.data.user.balance
+        resData.data.user.stocks.forEach(stock => {
+          total += stock.price * stock.shares
+        })
         this.setState({
           isLoading: false,
           balance: resData.data.user.balance,
+          total: total,
           stocks: resData.data.user.stocks
         })
       }
@@ -64,8 +70,8 @@ class Portfolio extends Component {
         {this.state.isLoading ?
           null
           :
-          <div className="some-page-wrapper">
-            <h1>Portfolio</h1>
+          <React.Fragment>
+            <h1 className="portfolio-header">Portfolio (${this.formatNumber(this.state.total)})</h1>
             <div className="row">
               <div className="column left">
                 {this.state.balance && <PortfolioTable balance={this.formatNumber(this.state.balance)} stocks={this.state.stocks}/>}
@@ -74,7 +80,7 @@ class Portfolio extends Component {
                 {this.state.balance && <PortfolioForm balance={this.formatNumber(this.state.balance)} />}
               </div>
             </div>
-          </div>
+        </React.Fragment>
         }
       </React.Fragment>
     )

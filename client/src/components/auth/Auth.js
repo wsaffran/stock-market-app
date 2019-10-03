@@ -17,22 +17,22 @@ class AuthPage extends Component {
     return(
       <React.Fragment>
         {this.state.isSignIn ?
-          <div>
+          <div className="auth-container">
             <h1>Sign In!</h1>
             <SignIn login={this.props.login}/>
           </div>
           :
-          <div>
+          <div className="auth-container">
             <h1>Register!</h1>
             <Register />
           </div>
         }
-        <button type="button" onClick={this.switchModeHandler}>
-          {this.state.isSignIn ?
-            'Don\'t have an account? Register here'
-            :
-            'Already have an account? Sign In'}
-        </button>
+        {this.state.isSignIn ?
+          <p className="p">Don't have an account? <span className="link" onClick={this.switchModeHandler}>Register here</span></p>
+          :
+          <p className="p">Already have an account? <span className="link" onClick={this.switchModeHandler}>Sign In</span></p>
+        }
+
       </React.Fragment>
     )
   }

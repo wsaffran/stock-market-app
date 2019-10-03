@@ -3,6 +3,7 @@
     "MONGO_USER": "willh_saffran",
     "MONGO_PASSWORD": "QSmSgeGYSis4Ecq",
     "MONGO_DB": "stock-market-app",
-    "API_KEY": "NZUOBHSHQFLTC4VR"
+    "API_KEY": "NZUOBHSHQFLTC4VR",
+    "JWT_KEY": "secretKey"
   }
 }

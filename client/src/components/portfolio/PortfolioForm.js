@@ -56,7 +56,7 @@ class PortfolioForm extends Component {
 
   render() {
     return(
-      <div className="form">
+      <div className="portfolio-form">
         <h3>Cash - ${this.props.balance}</h3>
         <form onSubmit={this.handleSubmit}>
           <div>
@@ -65,7 +65,7 @@ class PortfolioForm extends Component {
           <div>
             <input onChange={this.handleChange} type="number" name="quantity" placeholder="Quantity" min="1" value={this.state.quantity} />
           </div>
-          <button type="submit">Buy</button>
+          <button className="button" type="submit">Buy</button>
         </form>
       </div>
     )

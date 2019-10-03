@@ -1,3 +1,35 @@
 .main-content {
-  margin: 3.5rem 2.5rem;
+  margin-top: 6rem;
+}
+
+.button {
+  background-color: blue; /* Green #4CAF50 */
+  border: none;
+  color: white;
+  padding: .75rem 2rem .75rem 2rem;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+input[type=text],
+input[type=email],
+input[type=password],
+input[type=number],
+select {
+  width: 80%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
