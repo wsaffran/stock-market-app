@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import TransactionsTable from './TransactionsTable'
+import './Transactions.css'
 
 class Transactions extends Component {
 
@@ -56,10 +57,16 @@ class Transactions extends Component {
         {this.state.isLoading ?
           null
           :
-          <div className="transactions">
-            <h1>Transactions</h1>
-            {this.state.transactions && <TransactionsTable transactions={this.state.transactions} />}
-          </div>
+          <React.Fragment>
+            <h1 className="transactions-header">Transactions</h1>
+            <div className="row">
+              <div className="column left">
+                {this.state.transactions && <TransactionsTable transactions={this.state.transactions} />}
+              </div>
+              <div className="column right">
+              </div>
+            </div>
+          </React.Fragment>
         }
       </React.Fragment>
     )
