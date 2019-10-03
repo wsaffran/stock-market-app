@@ -17,7 +17,7 @@ class Portfolio extends Component {
     return x.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  componentDidMount() {
+  renderUser = () => {
     const requestBody = {
       query: `
         {
@@ -64,6 +64,10 @@ class Portfolio extends Component {
     .catch(console.log)
   }
 
+  componentDidMount() {
+    this.renderUser()
+  }
+
   render() {
     return(
       <React.Fragment>
@@ -77,7 +81,7 @@ class Portfolio extends Component {
                 {this.state.balance && <PortfolioTable balance={this.formatNumber(this.state.balance)} stocks={this.state.stocks}/>}
               </div>
               <div className="column right">
-                {this.state.balance && <PortfolioForm balance={this.formatNumber(this.state.balance)} />}
+                {this.state.balance && <PortfolioForm balance={this.formatNumber(this.state.balance)} renderUser={this.renderUser} />}
               </div>
             </div>
         </React.Fragment>

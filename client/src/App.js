@@ -29,9 +29,7 @@ class App extends React.Component {
           <Switch>
             {localStorage.getItem("token") && <Route path="/portfolio" component={Portfolio} />}
             {localStorage.getItem("token") && <Route path="/transactions" component={Transactions} />}
-            {!localStorage.getItem("token") && <Route path="/auth" render={ (routeProps) => {
-              return <AuthPage login={this.login}/>
-            }} />}
+            {!localStorage.getItem("token") && <Route path="/auth" render={props => <AuthPage {...props} login={this.login}/>} />}
             {!localStorage.getItem("token") && <Redirect from="/" to="/auth" />}
             {localStorage.getItem("token") && <Redirect from="/auth" to="/portfolio" />}
           </Switch>

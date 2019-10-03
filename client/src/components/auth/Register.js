@@ -27,7 +27,6 @@ class Register extends Component {
         mutation {
           createUser(name: "${this.state.name}", email: "${this.state.email}", password: "${this.state.password}") {
             id
-            email
           }
         }
       `
@@ -50,8 +49,7 @@ class Register extends Component {
       if (!resData.data.createUser) {
         this.setState({error: true})
       } else {
-        // figure out this.props.history
-        window.location.reload();
+        this.props.history.push('/')
       }
     })
     .catch(console.log)
@@ -63,7 +61,7 @@ class Register extends Component {
         {this.state.error && <p style={{color: "red"}}>Account with this email already exists</p>}
         <input onChange={this.handleChange} type="text" name="name" placeholder="Name" value={this.state.name} />
         <input onChange={this.handleChange} type="email" name="email" placeholder="Email" value={this.state.email} />
-        <input onChange={this.handleChange} type="password" name="password" placeholder="Password" value={this.state.password} />
+        <input onChange={this.handleChange} type="password" name="password" placeholder="Password" value={this.state.password} /><br></br>
         <button className="button" type="submit">Submit</button>
       </form>
     )

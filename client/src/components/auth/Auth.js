@@ -24,7 +24,7 @@ class AuthPage extends Component {
           :
           <div className="auth-container">
             <h1>Register!</h1>
-            <Register />
+            <Register {...this.props}/>
           </div>
         }
         {this.state.isSignIn ?
