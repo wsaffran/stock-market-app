@@ -4,7 +4,7 @@ A web-based stock portfolio application for Oscar Health / TTP Stage II Code Cha
 
 ## Demo
 
-![](ezgif.com-video-to-gif.gif)
+![](./gifs/ezgif.com-video-to-gif.gif)
 
 ## Getting Started
 
@@ -57,14 +57,14 @@ This was a 1 week long project built for Oscar Health / TTP Stage II Code Challe
   
   2. As a user, I want to authenticate via email and password so that I can access my account.
   
-   ![](email2.gif)
+   ![](./gifs/email2.gif)
    
   3. As a user, I want to buy shares of stock at its current price by specifying its ticker symbol and the number of sharesso that I can invest.
   - A user can only buy whole number quantities of shares.
   - A user can only buy shares if they have enough cash in their account for a given purchase.
   - A user canonly buy shares if the ticker symbol is valid.
   
-  ![](transaction.gif)
+  ![](./gifs/transaction.gif)
   
   4.As a user,I want to view a list of all transactions I’ve made to date (trades) so that I can perform an audit.
   
