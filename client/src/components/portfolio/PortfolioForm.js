@@ -5,7 +5,8 @@ class PortfolioForm extends Component {
 
   state = {
     ticker: "",
-    quantity: ""
+    quantity: "",
+    error: ""
   }
 
   handleChange = (event) => {
@@ -50,8 +51,21 @@ class PortfolioForm extends Component {
         this.props.renderUser()
         this.setState({
           ticker: "",
-          quantity: ""
+          quantity: "",
+          error: ""
         })
+      } else {
+        if (resData.errors) {
+          let errorMsg = ''
+          if (resData.errors[0]['message'].split(" ")[0] === 'Unexpected') {
+            errorMsg = 'Invalid ticker'
+          } else {
+            errorMsg = resData.errors[0]['message']
+          }
+          this.setState({
+            error: errorMsg
+          })
+        }
       }
 
     })
@@ -63,6 +77,7 @@ class PortfolioForm extends Component {
       <div className="portfolio-form">
         <h3>Cash - ${this.props.balance}</h3>
         <form className="portfolio-form__form" onSubmit={this.handleSubmit}>
+          {this.state.error.length > 0 && <p style={{color: 'red'}}>{this.state.error}</p>}
           <input
             onChange={this.handleChange}
             type="text"

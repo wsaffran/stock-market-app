@@ -6,7 +6,7 @@ class Register extends Component {
     name: '',
     email: '',
     password: '',
-    error: false
+    error: ''
   }
 
   handleChange = (event) => {
@@ -46,8 +46,10 @@ class Register extends Component {
       return res.json()
     })
     .then(resData => {
-      if (!resData.data.createUser) {
-        this.setState({error: true})
+      if (resData.errors) {
+        this.setState({
+          error: resData.errors[0]['message']
+        })
       } else {
         this.props.history.push('/')
       }
@@ -58,10 +60,25 @@ class Register extends Component {
   render() {
     return(
       <form onSubmit={this.handleSubmit}>
-        {this.state.error && <p style={{color: "red"}}>Account with this email already exists</p>}
-        <input onChange={this.handleChange} type="text" name="name" placeholder="Name" value={this.state.name} />
-        <input onChange={this.handleChange} type="email" name="email" placeholder="Email" value={this.state.email} />
-        <input onChange={this.handleChange} type="password" name="password" placeholder="Password" value={this.state.password} /><br></br>
+        {this.state.error && <p style={{color: "red"}}>{this.state.error}</p>}
+        <input
+          onChange={this.handleChange}
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={this.state.name} />
+        <input
+          onChange={this.handleChange}
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={this.state.email} />
+        <input
+          onChange={this.handleChange}
+          type="password"
+          name="password"
+          placeholder="Password" 
+          value={this.state.password} /><br></br>
         <button className="button" type="submit">Submit</button>
       </form>
     )
