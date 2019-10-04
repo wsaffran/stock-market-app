@@ -4,7 +4,7 @@ A web-based stock portfolio application for Oscar Health / TTP Stage II Code Cha
 
 ## Demo
 
-[ INSERT DEMO HERE ]
+![](ezgif.com-video-to-gif.gif)
 
 ## Getting Started
 
