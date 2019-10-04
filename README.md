@@ -10,14 +10,9 @@ A web-based stock portfolio application for Oscar Health / TTP Stage II Code Cha
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-You will need `node` and `npm` installed globally on your machine
+Clone down this repository. You will need `node` and `npm` installed globally on your machine
 
 ### Installing
-
-Installation:
-
-Clone down this repository. 
 
 Installation:
 
