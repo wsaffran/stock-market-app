@@ -62,7 +62,7 @@ class SignIn extends Component {
 
   render() {
     return(
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} autoComplete="off">
         {this.state.authFailed && <p style={{color: "red"}}>Authentication Failed</p>}
         <input
           onChange={this.handleChange}
@@ -73,7 +73,7 @@ class SignIn extends Component {
         <input
           onChange={this.handleChange}
           type="password"
-          name="password" 
+          name="password"
           placeholder="password"
           value={this.state.password} /><br></br>
         <button className="auth__button button" type="submit">Submit</button>

@@ -76,7 +76,7 @@ class PortfolioForm extends Component {
     return(
       <div className="portfolio-form">
         <h3>Cash - ${this.props.balance}</h3>
-        <form className="portfolio-form__form" onSubmit={this.handleSubmit}>
+        <form className="portfolio-form__form" onSubmit={this.handleSubmit} autoComplete="off">
           {this.state.error.length > 0 && <p style={{color: 'red'}}>{this.state.error}</p>}
           <input
             onChange={this.handleChange}

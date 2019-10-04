@@ -59,7 +59,7 @@ class Register extends Component {
 
   render() {
     return(
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} autoComplete="off">
         {this.state.error && <p style={{color: "red"}}>{this.state.error}</p>}
         <input
           onChange={this.handleChange}
@@ -77,7 +77,7 @@ class Register extends Component {
           onChange={this.handleChange}
           type="password"
           name="password"
-          placeholder="Password" 
+          placeholder="Password"
           value={this.state.password} /><br></br>
         <button className="button" type="submit">Submit</button>
       </form>
