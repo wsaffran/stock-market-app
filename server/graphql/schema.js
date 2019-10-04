@@ -174,6 +174,11 @@ const RootMutation = new GraphQLObjectType({
           .then(result => {
             return {...result._doc, password: null, id: result.id}
           })
+          .catch(err => {
+            if (err.errmsg.split(" ")[1] === 'duplicate' && err.errmsg.split(" ")[2] === 'key') {
+              throw new Error("Account with this email already exists")
+            }
+          })
         } catch (err) {
           throw err
         }
